@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# VS Code
+.vscode/
+
+# PolySniper Specific
+# We deliberately NOT ignore logs/ because we want to track Portfolio JSON on GitHub
+# logs/  <-- Commented out to track logs
+# But ignore raw text logs if they get too huge?
+logs/*.log
+# Keep CSV and JSON
+!logs/*.csv
+!logs/*.json
+
+# Artifacts
+brain/

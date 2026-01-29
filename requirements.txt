@@ -1,0 +1,21 @@
+# Core dependencies
+aiohttp              # Async HTTP client
+web3                 # Web3.py for Polygon RPC
+py-clob-client       # Polymarket CLOB client
+orjson               # Fast JSON parsing (6x faster)
+websockets           # WebSocket client for real-time data
+
+# Gas monitoring & utilities
+# Gas monitoring & utilities
+requests                 # HTTP requests
+python-dotenv            # Environment variables
+pydantic                 # Data validation
+
+# Logging & monitoring
+python-json-logger       # JSON logging for production
+
+# Development (optional)
+pytest
+black
+# Telegram Integration
+python-telegram-bot==20.7

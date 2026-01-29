@@ -1,0 +1,56 @@
+name: PolySniper Bot Scheduler
+
+on:
+  schedule:
+    # Run every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360 # Hard limit at 6h
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run PolySniper Bot
+      env:
+        # Secrets (Must be set in Repo Settings)
+        CLOB_API_KEY: ${{ secrets.CLOB_API_KEY }} # If needed or blank for public
+        WALLET_ADDRESS: ${{ secrets.WALLET_ADDRESS }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        
+        # Configuration
+        LIVE_TRADING: "False" # Force Dry Run on Scheduler
+        MAX_RUNTIME_MINUTES: "350" # 5h 50m (Leaves 10m buffer before GitHub timeout)
+        
+        # Optional override if you want different settings for GHA
+        POSITION_SIZE_USD: "20"
+      run: |
+        python main.py
+
+    - name: Commit and Push Results
+      if: always() # Run even if bot crashes or times out (logs might be valuable)
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "🤖 Update Bot Logs & Portfolio State"
+        file_pattern: 'logs/*.json logs/*.csv'
+        branch: ${{ github.head_ref }}
